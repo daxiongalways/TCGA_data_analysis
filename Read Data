@@ -1,0 +1,23 @@
+read.csv("data of COADREAD.csv")
+A <- read.csv("data of COADREAD.csv",row.names=2,header=T)
+#删除第一列
+B <- A[,-1]
+#删除第二列
+C <- B[,-1]
+#header=T表示将文件中第一行设为列名字。row.names= 1表示第一列设为行名。
+#这里需要解析TCGA数据库的ID规律，来判断样本归类问题。
+group_list=ifelse(as.numeric(substr(rownames(C),14,15)) < 10,'tumor','normal')
+#substr(colnames(expr),14,15)提取列名字符串中14，15位字符（01代表肿瘤，11代表正常，约定好的）
+#as.numeric将字符变为数字，一旦输出数字为01，小于10，则输出tumor，否则输出normal，从而得到和样本数一致的一列分组
+group_list
+table(group_list)
+exprSet=na.omit(C)#处理对象中缺失的值
+#从剪切板读入
+a <- read.table("clipboard", header = TRUE, sep="", row.names =1 )
+write.csv(a,file = "TCGA data of COADREAD from HiSeqV2")
+group_list=ifelse(as.numeric(substr(colnames(a),14,15)) < 10,'tumor','normal')
+#substr(colnames(expr),14,15)提取列名字符串中14，15位字符（01代表肿瘤，11代表正常，约定好的）
+#as.numeric将字符变为数字，一旦输出数字为01，小于10，则输出tumor，否则输出normal，从而得到和样本数一致的一列分组
+group_list
+table(group_list)
+write.csv(group_list,file="grouplist")
